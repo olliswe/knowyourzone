@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Sabi You Zone!</title>
+    <meta charset="utf-8">
+    <style>
+ #map {
+   width: 80%;
+   height: 400px;
+   background-color: grey;
+ }
+</style>
+    <!--jquery-->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script type=text/javascript>
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script >
+    <script type=text/javascript>
+            var pos = {lat : 5, lng : -5}
+            function getPos(position) {
+                               pos= {lat : position.coords.latitude,
+                               lng : position.coords.longitude}
+                                    };
+            function getLocation(){ navigator.geolocation.getCurrentPosition(getPos) };
+            getLocation()
+
+</script>
+
+
+</head>
+
+
+<body>
+
+<!--<button onclick="getLocation()">Try It</button>-->
+
+<script>
+
+
+
+
+
+    </script>
+<p><a href=# id=geobutton>Get Geo!</a>
+
+<span id=result>Hello</span>
+
+<div id="map"></div>
+
+
+// Initialize and add the map
+function initMap() {;
+    button = document.getElementById('geobutton')
+    var mapDiv = document.getElementById('map');
+    var center = new google.maps.LatLng(-34.397, 150.644);
+    var map = new google.maps.Map(mapDiv, {
+          zoom: 10,
+          center: center
+        });
+        google.maps.event.addDomListener(button, 'click', function() {
+                $.getJSON('/postmethod',
+                          pos
+                         ,
+                            function(data) {
+                            $("#result").text(data.result.ward);
+                                      var marker = new google.maps.Marker({
+                                       position: pos,
+                                       map: map
+                                        });
+                                        map.panTo(pos);
+                                        map.setZoom(15);
+                                        console.log(data.result);
+                                        map.data.addGeoJson(data.result)
+                            })
+
+
+
+        })
+
+;
+}
+
+    </script>
+    <!--Load the API from the specified URL
+    * The async attribute allows the browser to render the page while the API loads
+    * The key parameter will contain your own API key (which is not needed for this tutorial)
+    * The callback parameter executes the initMap() function
+    -->
+    <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgLo_BdpIcvd1CaVMpE4uCSXenKBGWabk&callback=initMap">
+    </script>
+</body>
+
+</html>
