@@ -27,12 +27,20 @@
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script >
     <script type=text/javascript>
+          var options = {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                         maximumAge: 0
+                        };
             var pos = {lat : 5, lng : -5}
             function getPos(position) {
                                pos= {lat : position.coords.latitude,
                                lng : position.coords.longitude}
                                     };
-            function getLocation(){ navigator.geolocation.getCurrentPosition(getPos) };
+             function error(err) {
+                                    console.warn(`ERROR(${err.code}): ${err.message}`);
+                                    };
+            function getLocation(){ navigator.geolocation.getCurrentPosition(getPos, error, options) };
             getLocation()
 
 </script>
