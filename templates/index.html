@@ -2,7 +2,16 @@
 
 <head>
     <title>Sabi You Zone!</title>
+
+   <!--meta-->
     <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!--Bootstrap-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+
+    <!--Map-->
     <style>
  #map {
    width: 80%;
@@ -10,6 +19,7 @@
    background-color: grey;
  }
 </style>
+
     <!--jquery-->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -33,25 +43,16 @@
 
 <body>
 
-<!--<button onclick="getLocation()">Try It</button>-->
-
-<script>
-
-
-
-
-
-    </script>
 <p><a href=# id=geobutton>Get Geo!</a>
 
 <span id=result>Hello</span>
 
 <div id="map"></div>
 
-
+<script>
 // Initialize and add the map
-function initMap() {;
-    button = document.getElementById('geobutton')
+function initMap() {
+    button = document.getElementById('geobutton');
     var mapDiv = document.getElementById('map');
     var center = new google.maps.LatLng(-34.397, 150.644);
     var map = new google.maps.Map(mapDiv, {
@@ -90,6 +91,8 @@ function initMap() {;
     <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgLo_BdpIcvd1CaVMpE4uCSXenKBGWabk&callback=initMap">
     </script>
+
+
 </body>
 
 </html>
