@@ -105,7 +105,9 @@
 
 </div>
 
-<p id=result>Hello</p>
+<div class="d-flex justify-content-center">
+    <p id="result"></p>
+</div>
 
 <div class="d-flex justify-content-center"><div id="map"></div></div>
 
@@ -147,7 +149,7 @@ google.maps.event.addDomListener(button, 'click', function() {
                           pos
                          ,
                             function(data) {
-                            $("#result").text(data.result.ward);
+                            $("#result").text("You're in Ward "+data.result.ward);
                                       var marker = new google.maps.Marker({
                                        position: pos,
                                        map: map
@@ -158,7 +160,7 @@ google.maps.event.addDomListener(button, 'click', function() {
                                          map.data.forEach(function(feature) {
                                                     map.data.remove(feature);
                                                     });
-                                          map.data.addGeoJson(geo_json);
+                                         map.data.addGeoJson(geo_json);
                                         map.data.addGeoJson(data.result)
                             })
 
