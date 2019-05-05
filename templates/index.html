@@ -26,16 +26,11 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script type=text/javascript>
-  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }}
     </script >
 
     <script type=text/javascript>
-          var options = {
-                        enableHighAccuracy: true,
-                        timeout: 5000,
-                         maximumAge: 0
-                        };
-            var pos = {lat : 5, lng : -5}
+            var pos = {}
             function getPos(position) {
                                pos= {lat : position.coords.latitude,
                                lng : position.coords.longitude}
@@ -43,7 +38,7 @@
              function error(err) {
                                     console.warn(`ERROR(${err.code}): ${err.message}`);
                                     };
-            function getLocation(){ navigator.geolocation.getCurrentPosition(getPos, error, options) };
+            function getLocation(){ navigator.geolocation.getCurrentPosition(getPos, error) };
             getLocation()
 
      </script>
@@ -54,7 +49,7 @@
 
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-brown" style="background-color: #A75507">
-    <a class="navbar-brand" href="#"><img src="http://fcc.gov.sl/wp-content/uploads/2018/07/Freetown-City-Council-Logo-White.png" height="30" width = "120" alt=""></a>
+    <a class="navbar-brand" href="#"><img src="static/logo.png" height="30" width = "120" alt=""></a>
     <span class="navbar-text" style = "color: white" >
         You Sabi You Zone?
       </span>
@@ -87,6 +82,7 @@
 <div class="container">
     <div class="row justify-content-md-center">
         <div class="col-md-auto"><a class = "btn btn-primary" role = "button" href=# id=geobutton>Use my Location</a></div>
+        <p></p>
         <div class="col-md-auto">
 
             <select class="form-control" id="dropdown">
@@ -97,6 +93,47 @@
                 <option value=4>403</option>
                 <option value=5>404</option>
                 <option value=6>405</option>
+                <option value=7>406</option>
+                <option value=8>407</option>
+                <option value=9>408</option>
+                <option value=10>409</option>
+                <option value=11>410</option>
+                <option value=12>411</option>
+                <option value=13>412</option>
+                <option value=14>413</option>
+                <option value=15>414</option>
+                <option value=16>415</option>
+                <option value=17>416</option>
+                <option value=18>417</option>
+                <option value=19>418</option>
+                <option value=20>419</option>
+                <option value=21>420</option>
+                <option value=22>421</option>
+                <option value=23>422</option>
+                <option value=24>423</option>
+                <option value=25>424</option>
+                <option value=26>425</option>
+                <option value=27>426</option>
+                <option value=28>427</option>
+                <option value=29>428</option>
+                <option value=30>429</option>
+                <option value=31>430</option>
+                <option value=32>431</option>
+                <option value=33>432</option>
+                <option value=34>433</option>
+                <option value=35>434</option>
+                <option value=36>435</option>
+                <option value=37>436</option>
+                <option value=38>437</option>
+                <option value=39>438</option>
+                <option value=40>439</option>
+                <option value=31>440</option>
+                <option value=32>441</option>
+                <option value=33>442</option>
+                <option value=34>443</option>
+                <option value=35>444</option>
+                <option value=36>445</option>
+                <option value=37>446</option>
             </select>
 
         </div>
@@ -104,9 +141,9 @@
 
 
 </div>
-
+<p></p>
 <div class="d-flex justify-content-center">
-    <p id="result"></p>
+    <h5 id="result"></h5>
 </div>
 
 <div class="d-flex justify-content-center"><div id="map"></div></div>
@@ -139,16 +176,29 @@ function initMap() {
           map.data.revertStyle();
           map.data.overrideStyle(event.feature, {strokeWeight: 2});
         });
-map.data.addListener('click', function(event) {
-  document.getElementById('<result></result>').textContent =
-      event.feature.getProperty('ward');
-});
+
+
 
 google.maps.event.addDomListener(button, 'click', function() {
+                if (pos == {}) {
+                $("#result").text("Sorry we were not able to use your GPS location. Please turn on location data and refresh the page")
+                }
+                else {
                 $.getJSON('/postmethod',
                           pos
                          ,
                             function(data) {
+                            if ((data.result) == "Nothing" ){
+                             $("#result").text("Sorry you're location seems to be outside Freetown! Please refresh the page and try again!");
+                              var marker = new google.maps.Marker({
+                                       position: pos,
+                                       map: map
+                                        });
+                                        map.panTo(pos);
+                                        map.setZoom(15);
+                                        console.log(data.result);
+                                }
+                            else {
                             $("#result").text("You're in Ward "+data.result.ward);
                                       var marker = new google.maps.Marker({
                                        position: pos,
@@ -162,7 +212,9 @@ google.maps.event.addDomListener(button, 'click', function() {
                                                     });
                                          map.data.addGeoJson(geo_json);
                                         map.data.addGeoJson(data.result)
+                                        }
                             })
+                            }
 
 
 
@@ -175,10 +227,13 @@ google.maps.event.addDomListener(button, 'click', function() {
               function(){
               ward_selected = dropdown.value;
               var ward_selected_shape = geo_json["features"][ward_selected];
+              var ward_selected_center = geo_json["features"][ward_selected]["properties"]["center"]
               map.data.forEach(function(feature) {
                                 map.data.remove(feature);
                                  });
               map.data.addGeoJson(ward_selected_shape)
+              map.panTo(ward_selected_center)
+              map.setZoom(14)
               });
   };
 
