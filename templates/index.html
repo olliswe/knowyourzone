@@ -31,6 +31,7 @@
 
     <script type=text/javascript>
             var pos = {}
+            var geo_active = true;
             function getPos(position) {
                                pos= {lat : position.coords.latitude,
                                lng : position.coords.longitude}
@@ -38,7 +39,14 @@
              function error(err) {
                                     console.warn(`ERROR(${err.code}): ${err.message}`);
                                     };
-            function getLocation(){ navigator.geolocation.getCurrentPosition(getPos, error) };
+            function getLocation() {
+                if (navigator.geolocation) {
+
+                    navigator.geolocation.getCurrentPosition(getPos, error)
+                } else {
+                    geo_active = false;
+                }
+            };
             getLocation()
 
      </script>
@@ -66,12 +74,12 @@
 <div class="container">
     <div class="row justify-content-md-center">
             <div class="col-md-auto">
- Using your mobile device? Simply click the button below - it will take your GPS location and tell you which ward you are in.
+ If you're using you're mobile device, simply click the button below - it will take your GPS location and tell you which ward you are in.
     </div>
     </div>
         <div class="row justify-content-md-center">
             <div class="col-md-auto">
-    Or select one of the wards in the dropdown to explore.    </div>
+    You can also select one of the wards in the dropdown, or just just click on the map to explore.    </div>
     </div>
 
 </div>
@@ -86,6 +94,7 @@
         <div class="col-md-auto">
 
             <select class="form-control" id="dropdown">
+                <option value="all">Select a ward</option>
                 <option value=0>399</option>
                 <option value=1>400</option>
                 <option value=2>401</option>
@@ -174,13 +183,14 @@ function initMap() {
 
   map.data.addListener('mouseover', function(event) {
           map.data.revertStyle();
-          map.data.overrideStyle(event.feature, {strokeWeight: 2});
+          map.data.overrideStyle(event.feature, { fillColor:'green'});
         });
 
 
 
 google.maps.event.addDomListener(button, 'click', function() {
-                if (pos == {}) {
+                if (geo_active == false)
+                {
                 $("#result").text("Sorry we were not able to use your GPS location. Please turn on location data and refresh the page")
                 }
                 else {
@@ -189,14 +199,13 @@ google.maps.event.addDomListener(button, 'click', function() {
                          ,
                             function(data) {
                             if ((data.result) == "Nothing" ){
-                             $("#result").text("Sorry you're location seems to be outside Freetown! Please refresh the page and try again!");
+                             $("#result").text("Sorry your location seems to be outside Freetown! Please ese the map or select a ward in the dropdown to explore, or refresh the page and try again!");
                               var marker = new google.maps.Marker({
                                        position: pos,
                                        map: map
                                         });
                                         map.panTo(pos);
                                         map.setZoom(15);
-                                        console.log(data.result);
                                 }
                             else {
                             $("#result").text("You're in Ward "+data.result.ward);
@@ -206,7 +215,6 @@ google.maps.event.addDomListener(button, 'click', function() {
                                         });
                                         map.panTo(pos);
                                         map.setZoom(15);
-                                        console.log(data.result);
                                          map.data.forEach(function(feature) {
                                                     map.data.remove(feature);
                                                     });
@@ -226,6 +234,15 @@ google.maps.event.addDomListener(button, 'click', function() {
   google.maps.event.addDomListener(dropdown, 'change',
               function(){
               ward_selected = dropdown.value;
+              if (ward_selected == "all") {
+                  map.data.forEach(function(feature) {
+                      map.data.remove(feature);
+                                 });
+                  map.data.addGeoJson(geo_json);
+                  map.panTo(center);
+                  map.setZoom(12);
+              }
+              else {
               var ward_selected_shape = geo_json["features"][ward_selected];
               var ward_selected_center = geo_json["features"][ward_selected]["properties"]["center"]
               map.data.forEach(function(feature) {
@@ -233,7 +250,7 @@ google.maps.event.addDomListener(button, 'click', function() {
                                  });
               map.data.addGeoJson(ward_selected_shape)
               map.panTo(ward_selected_center)
-              map.setZoom(14)
+              map.setZoom(14)}
               });
   };
 
