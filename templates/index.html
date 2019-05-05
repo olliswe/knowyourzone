@@ -214,13 +214,16 @@ google.maps.event.addDomListener(button, 'click', function() {
                                        position: pos,
                                        map: map
                                         });
+
                                         map.panTo(pos);
                                         map.setZoom(15);
                                          map.data.forEach(function(feature) {
                                                     map.data.remove(feature);
                                                     });
                                          map.data.addGeoJson(geo_json);
-                                        map.data.addGeoJson(data.result)
+                                        map.data.addGeoJson(data.result);
+                                        infowindow2 = new google.maps.InfoWindow({content :data.result.ward});
+                                        infowindow2.open(map, marker)
                                         }
                             })
                             }
@@ -265,7 +268,7 @@ google.maps.event.addDomListener(button, 'click', function() {
     * The key parameter will contain your own API key (which is not needed for this tutorial)
     * The callback parameter executes the initMap() function
     -->
-    <script
+    <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgLo_BdpIcvd1CaVMpE4uCSXenKBGWabk&callback=initMap">
     </script>
 
