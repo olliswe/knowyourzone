@@ -30,22 +30,17 @@
     </script >
 
     <script type=text/javascript>
-            var pos = {}
-            var geo_active = true;
+            var pos = {};
+            var geo_active = true
             function getPos(position) {
                                pos= {lat : position.coords.latitude,
                                lng : position.coords.longitude}
                                     };
              function error(err) {
-                                    console.warn(`ERROR(${err.code}): ${err.message}`);
+                                    geo_active = false;
                                     };
             function getLocation() {
-                if (navigator.geolocation) {
-
-                    navigator.geolocation.getCurrentPosition(getPos, error)
-                } else {
-                    geo_active = false;
-                }
+                         navigator.geolocation.getCurrentPosition(getPos, error)
             };
             getLocation()
 
@@ -90,11 +85,10 @@
 <div class="container">
     <div class="row justify-content-md-center">
         <div class="col-md-auto"><a class = "btn btn-primary" role = "button" href=# id=geobutton>Use my Location</a></div>
-        <p></p>
         <div class="col-md-auto">
 
             <select class="form-control" id="dropdown">
-                <option value="all">Select a ward</option>
+                <option value="all">Show all wards</option>
                 <option value=0>399</option>
                 <option value=1>400</option>
                 <option value=2>401</option>
@@ -173,8 +167,8 @@ function initMap() {
           center: center
         });
 
-  var infowindow = new google.maps.InfoWindow({ });
-  var geo_json = {{layer|tojson|safe}}
+
+  var geo_json = {{layer|tojson|safe}};
   map.data.addGeoJson(geo_json);
   map.data.setStyle({
           fillColor: 'grey',
@@ -184,9 +178,16 @@ function initMap() {
   map.data.addListener('mouseover', function(event) {
           map.data.revertStyle();
           map.data.overrideStyle(event.feature, { fillColor:'green'});
+          ward_no = event.feature.getProperty('ward');
+          info_center =event.feature.getProperty('center')
+          console.log(ward_no);
+          infowindow = new google.maps.InfoWindow({content : ward_no.toString(), position:info_center})
+          infowindow.open(map);
         });
 
-
+  map.data.addListener('mouseout',function(event){
+      infowindow.close(map)
+    })
 
 google.maps.event.addDomListener(button, 'click', function() {
                 if (geo_active == false)
