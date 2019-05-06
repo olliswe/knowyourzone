@@ -149,6 +149,11 @@
     <h5 id="result"></h5>
 </div>
 
+<div class="d-flex justify-content-center"> <a id="link" href="" target="_blank"></a>
+ </div>
+
+<div><p></p></div>
+
 <div class="d-flex justify-content-center"><div id="map"></div></div>
 
 <div><p></p></div>
@@ -190,9 +195,8 @@ function initMap() {
     })
 
 google.maps.event.addDomListener(button, 'click', function() {
-                if (geo_active == false)
-                {
-                $("#result").text("Sorry we were not able to use your GPS location. Please turn on location data and refresh the page")
+                if (geo_active == false) {
+                    $("#result").text("Sorry we were not able to use your GPS location. Please turn on location data and refresh the page")
                 }
                 else {
                 $.getJSON('/postmethod',
@@ -200,7 +204,7 @@ google.maps.event.addDomListener(button, 'click', function() {
                          ,
                             function(data) {
                             if ((data.result) == "Nothing" ){
-                             $("#result").text("Sorry your location seems to be outside Freetown! Please ese the map or select a ward in the dropdown to explore, or refresh the page and try again!");
+                             $("#result").text("Sorry your location seems to be outside Freetown! Please use the map or select a ward in the dropdown to explore, or refresh the page and try again!");
                               var marker = new google.maps.Marker({
                                        position: pos,
                                        map: map
@@ -210,6 +214,9 @@ google.maps.event.addDomListener(button, 'click', function() {
                                 }
                             else {
                             $("#result").text("You're in Ward "+data.result.ward);
+                            $("#link"). attr("href", "http://fcc.gov.sl/instructor/ward-"+data.result.ward+"/");
+                            $("#link").text("Find out more about ward "+ data.result.ward);
+
                                       var marker = new google.maps.Marker({
                                        position: pos,
                                        map: map
@@ -248,11 +255,14 @@ google.maps.event.addDomListener(button, 'click', function() {
               }
               else {
               var ward_selected_shape = geo_json["features"][ward_selected];
+              var ward_no = parseInt(ward_selected,10) +399
               var ward_selected_center = geo_json["features"][ward_selected]["properties"]["center"]
               map.data.forEach(function(feature) {
                                 map.data.remove(feature);
                                  });
               map.data.addGeoJson(ward_selected_shape)
+              $("#link").text("Find out more about ward "+ ward_no);
+              $("#link"). attr("href", "http://fcc.gov.sl/instructor/ward-"+ward_no+"/")
               map.panTo(ward_selected_center)
               map.setZoom(14)}
               });
