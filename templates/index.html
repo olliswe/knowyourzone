@@ -186,8 +186,8 @@ function initMap() {
           map.data.overrideStyle(event.feature, { fillColor:'green'});
           ward_no = event.feature.getProperty('ward');
           info_center =event.feature.getProperty('center')
-          console.log(ward_no);
-          infowindow = new google.maps.InfoWindow({content : ward_no.toString(), position:info_center})
+          wardHref =  "http://fcc.gov.sl/instructor/ward-"+ward_no.toString();
+          infowindow = new google.maps.InfoWindow({content : "<a href="+wardHref+" target='_blank'>"+ward_no.toString()+"</a>", position:info_center})
           infowindow.open(map);
         });
 
@@ -230,7 +230,8 @@ google.maps.event.addDomListener(button, 'click', function() {
                                                     });
                                          map.data.addGeoJson(geo_json);
                                         map.data.addGeoJson(data.result);
-                                        infowindow2 = new google.maps.InfoWindow({content :data.result.ward});
+                                        wardHref2 = "http://fcc.gov.sl/instructor/ward-"+data.result.ward
+                                        infowindow2 = new google.maps.InfoWindow({content :"<a href="+wardHref2+" target='_blank'>"+data.result.ward+"</a>"});
                                         infowindow2.open(map, marker)
                                         }
                             })
