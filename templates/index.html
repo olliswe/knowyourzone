@@ -344,7 +344,7 @@ google.maps.event.addDomListener(button, 'click', function() {
               map.setZoom(14);
               $("#waste-button").click(
                 function(){
-                    $.getJSON('https://fcc-ward-api-heroku.herokuapp.com/api/ward/'+ward_no,
+                    $.getJSON('https://fcc-sanitation-api.herokuapp.com/api/ward/'+ward_no,
                             function(data){
                             $('#ward-modal-title').text('Waste Collectors in Ward '+ward_no)
                             let html = '<table class="table table-striped table-bordered table-hover table-responsive">\n' +
