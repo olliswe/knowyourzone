@@ -157,8 +157,19 @@
 <div class="d-flex justify-content-center"> <a id="link" href="" target="_blank" class="btn btn-success" style="display:none; margin-bottom:20px"></a></div>
 
 <div class="d-flex justify-content-center">
-    <button id="waste-button" class="btn btn-success" style="display:none; margin-bottom:20px"x></button>
+    <button id="waste-button" class="btn btn-success" data-toggle="collapse" data-target="#wasteCollapse" aria-expanded="false" aria-controls="wasteCollapse" style="display:none; margin-bottom:20px"x></button>
 </div>
+
+<div class="container">
+    <div class="collapse" id="wasteCollapse">
+      <div class="card mb-5">
+          <div class="card-header" id="ward-modal-title"></div>
+          <div class="card-body" id="ward-modal-body" style="padding:0"></div>
+      </div>
+    </div>
+</div>
+
+
 
 
 <div class="d-flex justify-content-center"><div id="map"></div></div>
@@ -167,23 +178,23 @@
 <br>
 <br>
 
-<div class="modal fade" id="ward-modal" tabindex="-1" role="dialog" aria-labelledby="ward-modal-title" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="ward-modal-title" ></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" id="ward-modal-body" style="max-height: 70vh; max-width: 100vw; overflow:auto" >
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
+<!--<div class="modal fade" id="ward-modal" tabindex="-1" role="dialog" aria-labelledby="ward-modal-title" aria-hidden="true">-->
+<!--  <div class="modal-dialog modal-lg" role="document">-->
+<!--    <div class="modal-content">-->
+<!--      <div class="modal-header">-->
+<!--        <h5 class="modal-title" id="ward-modal-title" ></h5>-->
+<!--        <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--          <span aria-hidden="true">&times;</span>-->
+<!--        </button>-->
+<!--      </div>-->
+<!--      <div class="modal-body" id="ward-modal-body" style="max-height: 70vh; max-width: 100vw; overflow:auto" >-->
+<!--      </div>-->
+<!--      <div class="modal-footer">-->
+<!--        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
 
 </div>
 
@@ -193,6 +204,13 @@
 
 
 <script>
+    $(document).on({
+    ajaxStart: function() { $('#ward-modal-title').text('Fetching list, please wait...')
+   },
+
+});
+
+
 // Initialize and add the map
 function initMap() {
     button = document.getElementById('geobutton');
@@ -226,6 +244,7 @@ function initMap() {
     })
 
 google.maps.event.addDomListener(button, 'click', function() {
+                $('#wasteCollapse').collapse('hide');
                 if (geo_active == false) {
                     $("#result").text("Sorry we were not able to use your GPS location. Please turn on location data and refresh the page")
                 }
@@ -244,13 +263,23 @@ google.maps.event.addDomListener(button, 'click', function() {
                                         map.setZoom(18);
                                 }
                             else {
-                            let ward_no = data.result.ward
+                            let ward_no = data.result.ward;
                             $("#result").text("You're in Ward "+ward_no);
                             $("#link"). attr("href", "http://fcc.gov.sl/instructor/ward-"+ward_no+"/");
                             $("#link").css('display','inline');
                             $("#link").html("<i class=\"fas fa-info-circle\"></i> Find out more about ward "+ ward_no);
                             $("#waste-button").css('display','inline');
-                            $("#waste-button").html('<i class="fas fa-truck-pickup"></i> View Waste Collectors in ward '+ward_no);
+                            $("#waste-button").html('<i class="fas fa-truck-pickup"></i> View Waste Collectors in ward '+ward_no + ' <i class="far fa-angle-right"></i>');
+
+                            $('#wasteCollapse').on('hidden.bs.collapse', function () {
+                                $("#waste-button").html('<i class="fas fa-truck-pickup"></i> View Waste Collectors in ward '+ward_no + ' <i class="far fa-angle-right"></i>');
+                            })
+
+                            $('#wasteCollapse').on('show.bs.collapse', function () {
+                                $("#waste-button").html('<i class="fas fa-truck-pickup"></i> Hide Waste Collectors in ward '+ward_no+ ' <i class="far fa-angle-down"></i>');
+                            })
+
+
                             $("#waste-button").click(
                             function(){
                             $.getJSON('https://fcc-sanitation-api.herokuapp.com/api/ward/'+ward_no,
@@ -312,11 +341,15 @@ google.maps.event.addDomListener(button, 'click', function() {
 
         })
 
+
+
+
 ;
 
   var dropdown = document.getElementById('dropdown');
   google.maps.event.addDomListener(dropdown, 'change',
               function(){
+                $('#wasteCollapse').collapse('hide');
               $("#waste-button").off();
               ward_selected = dropdown.value;
               if (ward_selected == "all") {
@@ -339,9 +372,18 @@ google.maps.event.addDomListener(button, 'click', function() {
               $("#link").css('display','inline');
               $("#link"). attr("href", "http://fcc.gov.sl/instructor/ward-"+ward_no+"/");
               $("#waste-button").css('display','inline');
-              $("#waste-button").html('<i class="fas fa-truck-pickup"></i> View Waste Collectors in ward '+ward_no);
+              $("#waste-button").html('<i class="fas fa-truck-pickup"></i> View Waste Collectors in ward '+ward_no+' <i class="fas fa-angle-right"></i>');
               map.panTo(ward_selected_center);
               map.setZoom(14);
+
+              $('#wasteCollapse').on('hidden.bs.collapse', function () {
+                $("#waste-button").html('<i class="fas fa-truck-pickup"></i> View Waste Collectors in ward '+ward_no + ' <i class="fas fa-angle-right"></i>');
+            })
+
+            $('#wasteCollapse').on('show.bs.collapse', function () {
+                $("#waste-button").html('<i class="fas fa-truck-pickup"></i> Hide Waste Collectors in ward '+ward_no+ ' <i class="fas fa-angle-down"></i>');
+            })
+
               $("#waste-button").click(
                 function(){
                     $.getJSON('https://fcc-sanitation-api.herokuapp.com/api/ward/'+ward_no,
