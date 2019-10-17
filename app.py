@@ -2,10 +2,12 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash, jsonify, send_from_directory
 import geopandas as gpd
 from shapely.geometry import Point, Polygon
+from flask_cors import CORS
 import json
 
 
 app = Flask(__name__, static_folder='static')
+CORS(app)
 
 gdf = gpd.read_file('FCC Ward ShapleFile/Western_Area_Urban_Wards.shp')
 gdf['coords'] = gdf['geometry'].apply(lambda x: x.representative_point().coords[:])
