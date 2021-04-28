@@ -63,6 +63,10 @@ def send_file(filename):
     return send_from_directory(app.static_folder, filename)
 
 
+@app.route('/phu', methods=['GET'])
+def phus():
+    return render_template('phu.html')
+
 
 
 if __name__ == '__main__':
